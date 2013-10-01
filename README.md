@@ -1,7 +1,7 @@
 OpenWRT CGI Reconnecter
 ===
 
-This is a simple CGI script for [OpenWRT](http://openwrt.org/) Backfire (Kamikaze should work too, but I have not tested this) to allow reconnecting to the Internet without any authentication.
+This is a simple CGI script for [OpenWRT](http://openwrt.org/) Attitude Adjustment to allow reconnecting to the Internet /router reboot from LAN without any authentication.
 
 HOWTO Install
 ---
