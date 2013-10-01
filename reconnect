@@ -13,21 +13,48 @@
 #   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
 #
 #  0. You just DO WHAT THE FUCK YOU WANT TO.
-
-if [ ${QUERY_STRING} = 'go' ]; then
-	echo "Content-Type: text/plain"
-	echo ""
-	echo -n "Reconnecting..."
-	ifup wan && echo "OK." || echo "Error."
-	sleep 3
-	ifconfig ppp0 | grep -F "addr"
-else
-	cat <<EOF
+cat <<EOF
 Content-Type: text/html
 
 <!DOCTYPE html>
-<html><head><title>Simple Reconnector</title><head>
-<body><h1><a href="?go">Reconnect</a></h1></body></html>
+<html><head><title>Router control</title><head>
+<body>
+EOF
 
+if [ ${QUERY_STRING} = 'wan' ]; then
+	echo "<p>Reconnecting..."
+	ifdown wan
+	sleep 5
+	ifup wan && echo "<font color='green'>OK!</font>" || echo "<font color='red'>Error!</font>"
+	echo "</p>"
+elif [ ${QUERY_STRING} = 'boot' ]; then
+	cat <<EOF
+<p>Rebooting the router... You will be redirected in a minute.</p>
+<script type="text/javascript">
+function later() {
+    window.location = "http://www.google.com"
+}
+setTimeout('later()', 60000)
+</script>
+</body></html>
+EOF
+	reboot
+else
+	cat <<EOF
+<h1>Router menu</h1>
+<script type="text/javascript">
+var decided = false; // easier to prevent multiple clicks, than... sigh.
+</script><ul>
+<li><a href="javascript:if(!decided){decided=true;window.location='?wan';}">Reconnect WAN interface</a></li>
+<li><a href="javascript:if(!decided){decided=true;window.location='?boot';}">Reboot the router</a></li>
+</ul>
 EOF
 fi
+
+echo "<p>Current WAN interface status:</p><pre>"
+ifstatus wan
+echo "</pre>"
+
+cat <<EOF
+</body></html>
+EOF
